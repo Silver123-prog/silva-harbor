@@ -1,0 +1,15 @@
+/* Sign up / log in pages and header account controls */
+.auth-card { max-width: 440px; margin: 2rem auto; padding: 1.75rem; }
+.auth-card h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); }
+.auth-sub { color: var(--muted); margin: 0.4rem 0 1.4rem; }
+.hint { color: var(--muted); font-size: 0.85rem; }
+.auth-switch { margin: 1.25rem 0 0; color: var(--muted); }
+.demo { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.demo p { margin: 0; color: var(--muted); }
+.btn:disabled { opacity: 0.6; cursor: wait; }
+.header-actions { display: flex; align-items: center; gap: 0.5rem; }
+.nav-user { color: var(--muted); font-weight: 500; max-width: 12ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 560px) {
+  .nav-user { display: none; }
+  .brand { flex: 1 1 auto; }
+}

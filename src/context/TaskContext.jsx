@@ -1,30 +1,15 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 
+import { tasksKey } from "../data/seed.js";
+
 const TaskContext = createContext(null);
-const STORAGE_KEY = "Silva Harbor-tasks";
 
-const daysAgo = (n) => {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString();
-};
-
-// Demo data so the dashboard looks alive on first visit.
-const seed = [
-  { id: "s1", title: "Plan the week", notes: "Pick three things that matter most.", priority: "high", due: "", done: true, createdAt: daysAgo(3), completedAt: daysAgo(2) },
-  { id: "s2", title: "Reply to design feedback", notes: "", priority: "medium", due: "", done: true, createdAt: daysAgo(3), completedAt: daysAgo(1) },
-  { id: "s3", title: "Book dentist appointment", notes: "", priority: "low", due: "", done: true, createdAt: daysAgo(2), completedAt: daysAgo(1) },
-  { id: "s4", title: "Finish portfolio case study", notes: "Add the before/after screenshots and a short summary.", priority: "high", due: "", done: false, createdAt: daysAgo(1), completedAt: null },
-  { id: "s5", title: "Read two chapters", notes: "", priority: "low", due: "", done: false, createdAt: daysAgo(1), completedAt: null },
-  { id: "s6", title: "Groceries", notes: "Rice, tomatoes, fish, plantain.", priority: "medium", due: "", done: false, createdAt: daysAgo(0), completedAt: null },
-];
-
-function load() {
+function load(key) {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : seed;
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : [];
   } catch {
-    return seed;
+    return [];
   }
 }
 
@@ -61,12 +46,13 @@ function reducer(state, action) {
   }
 }
 
-export function TaskProvider({ children }) {
-  const [tasks, dispatch] = useReducer(reducer, undefined, load);
+export function TaskProvider({ userId, children }) {
+  const key = tasksKey(userId);
+  const [tasks, dispatch] = useReducer(reducer, key, load);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  }, [tasks]);
+    localStorage.setItem(key, JSON.stringify(tasks));
+  }, [key, tasks]);
 
   return <TaskContext.Provider value={{ tasks, dispatch }}>{children}</TaskContext.Provider>;
 }

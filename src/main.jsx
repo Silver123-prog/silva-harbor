@@ -2,15 +2,16 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
-import { TaskProvider } from "./context/TaskContext.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
 import "./index.css";
+import "./auth.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <TaskProvider>
+      <AuthProvider>
         <App />
-      </TaskProvider>
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

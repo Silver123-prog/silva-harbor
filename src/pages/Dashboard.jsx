@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTasks } from "../context/TaskContext.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 import ProgressRing from "../components/ProgressRing.jsx";
 import WeekChart from "../components/WeekChart.jsx";
 import TaskForm from "../components/TaskForm.jsx";
@@ -16,6 +17,8 @@ function greeting() {
 
 export default function Dashboard() {
   const { tasks } = useTasks();
+  const { user } = useAuth();
+  const firstName = user.name.split(" ")[0];
   const open = tasks.filter((t) => !t.done).sort((a, b) => order[a.priority] - order[b.priority]);
   const doneCount = tasks.length - open.length;
   const progress = tasks.length ? doneCount / tasks.length : 0;
@@ -24,9 +27,11 @@ export default function Dashboard() {
     <>
       <section className="hero">
         <div>
-          <h1>{greeting()}.</h1>
+          <h1>{greeting()}, {firstName}.</h1>
           <p className="lead">
-            {open.length === 0
+            {tasks.length === 0
+              ? "Your plan is empty. Add your first task below."
+              : open.length === 0
               ? "Everything is done. Add something new or enjoy the quiet."
               : `You have ${open.length} open ${open.length === 1 ? "task" : "tasks"}. Start with the first one below.`}
           </p>

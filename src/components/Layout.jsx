@@ -1,8 +1,10 @@
 import { NavLink, Outlet, Link } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Layout() {
   const { theme, toggle } = useTheme();
+  const { user, signOut } = useAuth();
 
   return (
     <>
@@ -14,25 +16,38 @@ export default function Layout() {
           </Link>
           <nav aria-label="Main">
             <ul className="nav-list">
-              <li><NavLink to="/" end>Today</NavLink></li>
-              <li><NavLink to="/tasks">Tasks</NavLink></li>
+              {user && <li><NavLink to="/" end>Today</NavLink></li>}
+              {user && <li><NavLink to="/tasks">Tasks</NavLink></li>}
               <li><NavLink to="/about">About</NavLink></li>
             </ul>
           </nav>
-          <button
-            className="btn btn-ghost"
-            onClick={toggle}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-          >
-            {theme === "dark" ? "☀️ Light" : "🌙 Dark"}
-          </button>
+          <div className="header-actions">
+            <button
+              className="btn btn-ghost"
+              onClick={toggle}
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
+            >
+              {theme === "dark" ? "☀️" : "🌙"}
+            </button>
+            {user ? (
+              <>
+                <span className="nav-user">{user.name}</span>
+                <button className="btn btn-ghost" onClick={signOut}>Log out</button>
+              </>
+            ) : (
+              <>
+                <Link className="btn btn-ghost" to="/login">Log in</Link>
+                <Link className="btn btn-primary" to="/signup">Sign up</Link>
+              </>
+            )}
+          </div>
         </div>
       </header>
       <main id="main" className="container">
         <Outlet />
       </main>
       <footer className="container site-footer">
-        <p>Built by Michael Adebayo</p>
+        {/* <p>Design By Michael Silva.</p> */}
       </footer>
     </>
   );

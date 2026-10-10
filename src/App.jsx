@@ -7,6 +7,8 @@ import TaskDetail from "./pages/TaskDetail.jsx";
 import About from "./pages/About.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 export default function App() {
@@ -16,6 +18,8 @@ export default function App() {
         {/* Public pages */}
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="reset-password" element={<ResetPassword />} />
         <Route path="about" element={<About />} />
 
         {/* Private pages: need an account */}

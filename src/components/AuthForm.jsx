@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import PasswordField from "./PasswordField.jsx";
 
 export default function AuthForm({ mode }) {
   const isSignup = mode === "signup";
-  const { user, signUp, signIn, demo } = useAuth();
+  const { user, ready, hasBackend, signUp, signIn, demo } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -12,8 +13,22 @@ export default function AuthForm({ mode }) {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [confirmEmail, setConfirmEmail] = useState(false);
 
+  if (!ready) return <p className="empty" role="status">Loading…</p>;
   if (user) return <Navigate to="/" replace />;
+
+  if (confirmEmail) {
+    return (
+      <div className="auth-card panel">
+        <h1>Check your email</h1>
+        <p className="auth-sub">
+          We sent a confirmation link to <strong>{form.email}</strong>. Open it, then come back and log in.
+        </p>
+        <Link className="btn btn-primary" to="/login">Go to log in</Link>
+      </div>
+    );
+  }
 
   const change = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -22,9 +37,14 @@ export default function AuthForm({ mode }) {
     setError("");
     setBusy(true);
     try {
-      if (isSignup) await signUp(form);
-      else await signIn(form);
-      navigate(from, { replace: true });
+      if (isSignup) {
+        const { needsConfirmation } = await signUp(form);
+        if (needsConfirmation) setConfirmEmail(true);
+        else navigate(from, { replace: true });
+      } else {
+        await signIn(form);
+        navigate(from, { replace: true });
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -36,8 +56,13 @@ export default function AuthForm({ mode }) {
     <div className="auth-card panel">
       <h1>{isSignup ? "Create your account" : "Welcome back"}</h1>
       <p className="auth-sub">
-        {isSignup ? "Your tasks stay private to your account." : "Log in to see your plans."}
+        {isSignup ? "Your plans are private and available on any device." : "Log in to see your plans."}
       </p>
+
+      {/* Developer note: only visible while running locally, never on the live site */}
+      {!hasBackend && import.meta.env.DEV && (
+        <p className="notice">Dev note: Supabase keys not found. Check .env.local and restart the dev server.</p>
+      )}
 
       <form className="stack" onSubmit={submit} noValidate>
         {isSignup && (
@@ -50,19 +75,13 @@ export default function AuthForm({ mode }) {
           <label htmlFor="email">Email</label>
           <input id="email" name="email" type="text" inputMode="email" autoComplete="email" value={form.email} onChange={change} />
         </div>
-        <div className="field">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete={isSignup ? "new-password" : "current-password"}
-            value={form.password}
-            onChange={change}
-            aria-describedby={isSignup ? "pw-hint" : undefined}
-          />
-          {isSignup && <span id="pw-hint" className="hint">At least 8 characters.</span>}
-        </div>
+        <PasswordField
+          value={form.password}
+          onChange={change}
+          autoComplete={isSignup ? "new-password" : "current-password"}
+          hint={isSignup ? "At least 8 characters." : undefined}
+        />
+        {!isSignup && <Link className="forgot" to="/forgot-password">Forgot password?</Link>}
 
         {error && <p className="error" role="alert">{error}</p>}
 

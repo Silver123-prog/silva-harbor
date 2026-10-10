@@ -1,10 +1,17 @@
-import { NavLink, Outlet, Link } from "react-router-dom";
+import { NavLink, Outlet, Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme.js";
 import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Layout() {
   const { theme, toggle } = useTheme();
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  // Leaving demo mode clears it, then opens the chosen page.
+  const leaveDemo = async (to) => {
+    await signOut();
+    navigate(to);
+  };
 
   return (
     <>
@@ -29,7 +36,13 @@ export default function Layout() {
             >
               {theme === "dark" ? "☀️" : "🌙"}
             </button>
-            {user ? (
+            {user?.isDemo ? (
+              <>
+                <span className="nav-user">Demo mode</span>
+                <button className="btn btn-ghost" onClick={() => leaveDemo("/login")}>Log in</button>
+                <button className="btn btn-primary" onClick={() => leaveDemo("/signup")}>Sign up</button>
+              </>
+            ) : user ? (
               <>
                 <span className="nav-user">{user.name}</span>
                 <button className="btn btn-ghost" onClick={signOut}>Log out</button>
@@ -47,7 +60,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <footer className="container site-footer">
-        {/* <p>Design By Michael Silva.</p> */}
+        <p>Your plans are private to your account.</p>
       </footer>
     </>
   );

@@ -1,8 +1,26 @@
 /* Sign up / log in pages and header account controls */
+
+/* Email and password inputs get the same look as the other inputs (fixes the dark/black box in light mode) */
+input[type="email"], input[type="password"] {
+  width: 100%; font: inherit; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 10px; padding: 0.6rem 0.8rem;
+}
+.pw-wrap { position: relative; }
+.pw-wrap input { padding-right: 4.5rem; }
+.pw-toggle {
+  position: absolute; right: 0.4rem; top: 50%; transform: translateY(-50%);
+  background: none; border: 0; color: var(--primary); font: inherit; font-weight: 700;
+  cursor: pointer; padding: 0.3rem 0.6rem; border-radius: 8px;
+}
+.pw-toggle:hover { background: var(--primary-soft); }
+
 .auth-card { max-width: 440px; margin: 2rem auto; padding: 1.75rem; }
 .auth-card h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); }
 .auth-sub { color: var(--muted); margin: 0.4rem 0 1.4rem; }
 .hint { color: var(--muted); font-size: 0.85rem; }
+.forgot { align-self: flex-end; font-size: 0.9rem; margin-top: -0.4rem; }
+.notice { background: var(--primary-soft); border-radius: 10px; padding: 0.6rem 0.9rem; font-size: 0.92rem; margin: 0 0 1rem; }
+.banner { background: color-mix(in srgb, var(--high) 12%, transparent); border-radius: 10px; padding: 0.6rem 0.9rem; margin: 0 0 1rem; }
 .auth-switch { margin: 1.25rem 0 0; color: var(--muted); }
 .demo { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .demo p { margin: 0; color: var(--muted); }

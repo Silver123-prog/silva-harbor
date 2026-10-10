@@ -60,7 +60,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <footer className="container site-footer">
-        <p>Your plans are private to your account.</p>
+        {/* <p>Your plans are private to your account.</p> */}
       </footer>
     </>
   );

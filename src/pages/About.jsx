@@ -3,7 +3,7 @@ export default function About() {
     <div className="prose">
       <h1>About Silva Harbor</h1>
       <p>
-         Hi, I'm Michael Adebayo, a web developer based in Lagos. I built Silva Harbor
+         Hi, I'm Michael Adebayo. I built Silva Harbor
         to show how I structure a React app: routing, shared state, saved data
         and a layout that works from phone to desktop.
       </p>

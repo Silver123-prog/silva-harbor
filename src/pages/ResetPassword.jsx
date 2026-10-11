@@ -3,15 +3,26 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import PasswordField from "../components/PasswordField.jsx";
 
-// Opened from the link in the reset email. The link signs the person in temporarily.
+// Opened from the link in the reset email. The link signs the person in just long enough to set a new password.
 export default function ResetPassword() {
-  const { user, ready, resetPassword } = useAuth();
+  const { user, ready, resetPassword, signOut } = useAuth();
   const [password, setPassword] = useState("");
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   if (!ready) return <p className="empty" role="status">Loading…</p>;
+
+  // Checked before the "expired" case, because signing out (below) clears the user.
+  if (done) {
+    return (
+      <div className="auth-card panel">
+        <h1>Password updated</h1>
+        <p className="auth-sub">Your password has been changed. Log in with your new password.</p>
+        <Link className="btn btn-primary" to="/login">Back to log in</Link>
+      </div>
+    );
+  }
 
   if (!user || user.isDemo) {
     return (
@@ -30,21 +41,12 @@ export default function ResetPassword() {
     try {
       await resetPassword(password);
       setDone(true);
+      await signOut(); // so they log in fresh with the new password
     } catch (err) {
       setError(err.message);
     } finally {
       setBusy(false);
     }
-  }
-
-  if (done) {
-    return (
-      <div className="auth-card panel">
-        <h1>Password updated</h1>
-        <p className="auth-sub">You're signed in with your new password.</p>
-        <Link className="btn btn-primary" to="/">Go to my plans</Link>
-      </div>
-    );
   }
 
   return (

@@ -21,7 +21,7 @@ function notConnected() {
 }
 
 const shape = (u) =>
-  u ? { id: u.id, email: u.email, name: u.user_metadata?.name || u.email?.split("@")[0] || "Friend" } : null;
+  u ? { id: u.id, email: u.email, name: u.user_metadata?.name || u.user_metadata?.full_name || u.email?.split("@")[0] || "Friend" } : null;
 
 const validEmail = (e) => /^\S+@\S+\.\S+$/.test(e);
 
@@ -68,6 +68,16 @@ export function AuthProvider({ children }) {
     }
   }
 
+  // Sends the person to Google, then back to this site already signed in.
+  async function signInWithGoogle() {
+    if (!supabase) throw notConnected();
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin, queryParams: { prompt: "select_account" } },
+    });
+    if (error) throw new Error(friendly(error));
+  }
+
   async function forgotPassword(email) {
     if (!supabase) throw notConnected();
     const cleanEmail = email.trim().toLowerCase();
@@ -97,7 +107,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, ready, hasBackend: !!supabase, signUp, signIn, signOut, demo, forgotPassword, resetPassword }}
+      value={{ user, ready, hasBackend: !!supabase, signUp, signIn, signInWithGoogle, signOut, demo, forgotPassword, resetPassword }}
     >
       {children}
     </AuthContext.Provider>
